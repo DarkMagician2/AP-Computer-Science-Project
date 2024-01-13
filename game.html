@@ -337,7 +337,6 @@
                     if(difficulty>200){
                         difficulty = 200;
                     }
-                    PLAYER.entity.innerHTML = difficulty;
                     //Spawning an enemy at increasing intervals
                     if(tick%Math.round(200/difficulty)==0){
                         enemies.push(new Entity(enemy));
