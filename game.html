@@ -9,11 +9,13 @@
             let escapePause = false;
             let score = 0;
             let lowQuality = false;
+            let scale = 500;
+            let scoreMult = 100;
             //Function to generate a random hexadecimal of size length that isn't completely white
             function genRanHex (size) {
                 return [...Array(size)].map(() => Math.round(Math.random() * 15).toString(16)).join('');
             }
-            //Function to generate a random x and y that are in the spawning zones
+            //function to generate a random x and y that are in the spawning zones
             const ranEnemySpawns = (info, coords) => {
                 let outx = Math.round(Math.random()*(w-info.width));
                 let outy = Math.round(Math.random()*(h-info.height));
@@ -172,7 +174,9 @@
             const NO_ENEMY = new Entity(noEnemy);
             NO_ENEMY.entity.style.zIndex = 2;
             //Providing information
-            NO_ENEMY.entity.innerHTML = "<!DOCTYPE html><html><h1 style='text-align: center;'>Welcome to My Shooter Game</h1><br><br><h2>Controls:</h2><br><h3>W is up, a is left, s is down, d is right, left click to shoot towards the mouse cursor, and escape is to pause. Your goal is to gain the highest score possible, to do that, shoot enemies. If an enemy touches you, the game will end. To enable low definition, press p now. To exit this menu, press escape.</h3></html>";
+            const startGame = setInterval(()=>{
+                NO_ENEMY.entity.innerHTML = "<h1 style='text-align: center;'>Welcome to My Shooter Game</h1><br><br><h2>Controls:</h2><br><h3>W is up, a is left, s is down, d is right, left click to shoot towards the mouse cursor, and escape is to pause. Your goal is to gain the highest score possible, to do that, shoot enemies. If an enemy touches you, the game will end. To enable low definition, press p now. To switch between easy mode, normal mode, hard mode, harder mode, or impossible mode, press h. Note: You earn less points in easy mode, and more in the harder difficulties. To exit this menu, press escape.</h3><br><h3>Current difficulty scaling: "+((scale==1000) ? "easy mode" : (scale==500) ? "normal mode" : (scale==400) ? "hard mode" : (scale==250) ? "harder mode" : "impossible mode")+"</h3>";
+            }, 20);
             //Creating the scoreboard
             const SCORE_BOX = new Entity(scoreTxt);
             SCORE_BOX.entity.style.zIndex = 3;
@@ -205,8 +209,32 @@
                         if(gamePause){
                             gamePause = false;
                             NO_ENEMY.entity.style.display = "none";
+                            clearInterval(startGame);
                         } else {
                             gamePause = true;
+                        }
+                    }
+                }
+            });
+            //Difficulty scaling
+            window.addEventListener("keydown", function(event) {
+                if(gamePause){
+                    if(event.key=="h"){
+                        if(scale==1000){
+                            scale = 500;
+                            scoreMult = 100;
+                        } else if(scale==500){
+                            scale = 400;
+                            scoreMult = 125;
+                        } else if(scale==400){
+                            scale = 250;
+                            scoreMult = 200;
+                        } else if(scale==250){
+                            scale = 100;
+                            scoreMult = 500;
+                        } else {
+                            scale = 1000;
+                            scoreMult = 25;
                         }
                     }
                 }
@@ -233,7 +261,7 @@
                 //Main section of logic
                 if(!gamePause){
                     //Score counter
-                    SCORE_BOX.entity.innerHTML = `Score: ${score*100}`;
+                    SCORE_BOX.entity.innerHTML = `Score: ${score}`;
                     //Incrementing tick counter
                     tick++;
                     //Updating the bounds of the screen
@@ -257,7 +285,7 @@
                         let tempE = enemies[i];
                         if(Entity.isTouching(PLAYER, tempE)){
                             NO_ENEMY.entity.style.display = "inline";
-                            NO_ENEMY.entity.innerHTML = "<!DOCTYPE html><html><h1 style='text-align: center;'>Game Over<br>Score: "+score*100+"</h1></html>";
+                            NO_ENEMY.entity.innerHTML = "<h1 style='text-align: center;'>Game Over<br>Score: "+score+"</h1>";
                             escapePause = true;
                             gamePause = true;
                             PLAYER.entity.style.backgroundColor = "transparent";
@@ -293,8 +321,7 @@
                                             lasers.splice(i, 1);
                                             enemies[j].delete(0, "all");
                                             enemies.splice(j, 1);
-                                            enemyCount--;
-                                            score++;
+                                            score += scoreMult;
                                         }
                                     }
 
@@ -306,38 +333,43 @@
                             }
                         }
                     }
-                    if(1+tick/1000>199){
-                        tick = 198000;
+                    let difficulty = Math.round(1+tick/scale);
+                    if(difficulty>200){
+                        difficulty = 200;
                     }
+                    PLAYER.entity.innerHTML = difficulty;
                     //Spawning an enemy at increasing intervals
-                    if(tick%Math.round(200/(1+(tick/1000)))==0){
+                    if(tick%Math.round(200/difficulty)==0){
                         enemies.push(new Entity(enemy));
                         let cooords = [];
-                        //Random enemy location in a valid spawn area
-                        ranEnemySpawns(playerInfo, cooords);
-                        enemies[enemyCount].moveTo(cooords[0], cooords[1]);
-                        //Changing color if low quality is enabled
-                        if(!lowQuality){
-                            enemies[enemyCount].entity.style.backgroundColor = "#"+genRanHex(6);
-                        } else {
-                            enemies[enemyCount].entity.innerHTML = "enemy";
+                        enemyCount = enemies.length-1;
+                        if(enemies.length>0){
+                            //Random enemy location in a valid spawn area
+                            ranEnemySpawns(playerInfo, cooords);
+                            enemies[enemyCount].moveTo(cooords[0], cooords[1]);
+                            //Changing color if low quality is enabled
+                            if(!lowQuality){
+                                enemies[enemyCount].entity.style.backgroundColor = "#"+genRanHex(6);
+                            } else {
+                                enemies[enemyCount].entity.innerHTML = "enemy";
+                            }
+                            //Keeping track of enemies
+                            enemyCount++;
                         }
-                        //Keeping track of enemies
-                        enemyCount++;
                         
                     }
                     //Move enemies towards player
                     if(enemies.length>0){
                         for(let i in enemies){
                             if(enemies[i].x<PLAYER.x){
-                                enemies[i].move(2, 0);
+                                enemies[i].move(2*(1+difficulty/20), 0);
                             } else if(enemies[i].x>PLAYER.x){
-                                enemies[i].move(-2, 0);
+                                enemies[i].move(-2*(1+difficulty/20), 0);
                             }
                             if(enemies[i].y<PLAYER.y){
-                                enemies[i].move(0, 2);
+                                enemies[i].move(0, 2*(1+difficulty/20));
                             } else if(enemies[i].y>PLAYER.y){
-                                enemies[i].move(0, -2);
+                                enemies[i].move(0, -2*(1+difficulty/20));
                             }
                         }
                     }
