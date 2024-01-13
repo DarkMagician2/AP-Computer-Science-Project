@@ -6,6 +6,7 @@
             let w = window.innerWidth;
             let h = window.innerHeight;
             let gamePause = true;
+            let escapePause = false;
             let score = 0;
             let lowQuality = false;
             function genRanHex (size) {
@@ -198,12 +199,14 @@
             });
             //Pause function
             window.addEventListener("keydown", function(event) {
-                if(event.key=="Escape"){
-                    if(gamePause){
-                        gamePause = false;
-                        NO_ENEMY.entity.style.display = "none";
-                    } else {
-                        gamePause = true;
+                if(!escapePause){
+                    if(event.key=="Escape"){
+                        if(gamePause){
+                            gamePause = false;
+                            NO_ENEMY.entity.style.display = "none";
+                        } else {
+                            gamePause = true;
+                        }
                     }
                 }
             });
@@ -252,7 +255,22 @@
                     for(let i=0;i<enemies.length;i++){
                         let tempE = enemies[i];
                         if(Entity.isTouching(PLAYER, tempE)){
-                            window.close();
+                            NO_ENEMY.entity.style.display = "inline";
+                            NO_ENEMY.entity.innerHTML = "<!DOCTYPE html><html><h1 style='text-align: center;'>Game Over<br>Score: "+score*100+"</h1></html>";
+                            escapePause = true;
+                            gamePause = true;
+                            PLAYER.entity.style.backgroundColor = "transparent";
+                            PLAYER.entity.innerHTML = "";
+                            for(let j=0;j<lasers.length;j++){
+                                if(lasers[j]=="[object Object]"){
+                                    lasers[j].delete(0, "all");
+                                }
+                            }
+                            lasers.splice(0, lasers.length);
+                            for(let j=0;j<enemies.length;j++){
+                                enemies[j].delete(0, "all");
+                            }
+                            enemies.splice(0, enemies.length);
                         }
                     }
                     //Laser collision and logic
@@ -311,14 +329,14 @@
                     if(enemies.length>0){
                         for(let i in enemies){
                             if(enemies[i].x<PLAYER.x){
-                                enemies[i].move(1, 0);
+                                enemies[i].move(2, 0);
                             } else if(enemies[i].x>PLAYER.x){
-                                enemies[i].move(-1, 0);
+                                enemies[i].move(-2, 0);
                             }
                             if(enemies[i].y<PLAYER.y){
-                                enemies[i].move(0, 1);
+                                enemies[i].move(0, 2);
                             } else if(enemies[i].y>PLAYER.y){
-                                enemies[i].move(0, -1);
+                                enemies[i].move(0, -2);
                             }
                         }
                     }
