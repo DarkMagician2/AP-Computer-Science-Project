@@ -5,15 +5,12 @@
             //Gets width and height of the window
             let w = window.innerWidth;
             let h = window.innerHeight;
-            let enemiesPause = false;
-            let lasersPause = false;
             let gamePause = true;
             let score = 0;
             let lowQuality = false;
-            /*Function to generate a random hexadecimal using the spread operator to make an array into a string, which was mapping a random base 16(hexadecimal) number from 0-f and returning it with arrow functions
-            credit:https://stackoverflow.com/questions/58325771/how-to-generate-random-hex-string-in-javascript
-            */
-            const genRanHex = size => [...Array(size)].map(() => Math.round(Math.random() * 15).toString(16)).join('');
+            function genRanHex (size) {
+                return [...Array(size)].map(() => Math.round(Math.random() * 15).toString(16)).join('');
+            }
             //function to generate a random x and y that are in the spawning zones
             const ranEnemySpawns = (info, coords) => {
                 let outx = Math.round(Math.random()*(w-info.width));
@@ -31,6 +28,7 @@
                 name: "default",
                 entity: ""
             };
+            //Keybinds
             let Key = {
             pressed: {},
             left: "a",
@@ -92,12 +90,14 @@
                     this.entity.style.left = this.x+this.posType;
                     this.entity.style.top = this.y+this.posType;
                 }
+                //A method to move the instance to a specified location
                 moveTo(x, y){
                     this.x = (x<=w-this.width&&x>=0) ? x : 0;
                     this.y = (y<=h-this.height&&y>=0) ? y : 0;
                     this.entity.style.left = this.x+this.posType;
                     this.entity.style.top = this.y+this.posType;
                 }
+                //A method to delete the instance or properties of the element
                 delete(delay, property){
                     setTimeout(()=>{
                         if(property!="all"){
@@ -108,6 +108,7 @@
                         }
                     },delay);
                 }
+                //A basic rectangle collision detector
                 static isTouching(element1, element2){
                     function touching(x1,y1,w1,h1,x2,y2,w2,h2){
                         if(x2>w1+x1||x1>w2+x2||y2>h1+y1||y1>h2+y2){
@@ -124,15 +125,18 @@
                 color: "#123456",
                 name: ""
             }
+            //changing color if low quality is enabled
             if(lowQuality){
                 player.color = "transparent";
             }
+            //The arguments of the lasers
             let laser = {
                 width: 10,
                 height: 10,
                 color: "red",
                 name: ""
             }
+            //changing color if low quality is enabled
             if(lowQuality){
                 laser.color = "transparent";
             }
@@ -141,7 +145,7 @@
                 color: "transparent",
                 name: ""
             }
-            //The bounding area where enemies will not spawn
+            //The bounding area where enemies will not spawn, and also it explains info at the start
             let noEnemy = {
                 posType: "%",
                 x: 12.5,
@@ -151,6 +155,7 @@
                 color: "#888888",
                 name: ""
             };
+            //Score counter
             let scoreTxt = {
                 color: "#ffffff",
                 name: score
@@ -164,21 +169,26 @@
             //Creating the box where enemies cannot spawn
             const NO_ENEMY = new Entity(noEnemy);
             NO_ENEMY.entity.style.zIndex = 2;
+            //Providing information
             NO_ENEMY.entity.innerHTML = "<!DOCTYPE html><html><h1 style='text-align: center;'>Welcome to My Shooter Game</h1><br><br><h2>Controls:</h2><br><h3>W is up, a is left, s is down, d is right, left click to shoot towards the mouse cursor, and escape is to pause. Your goal is to gain the highest score possible, to do that, shoot enemies. If an enemy touches you, the game will end. To enable low definition, press p now. To exit this menu, press escape.</h3></html>";
+            //Creating the scoreboard
             const SCORE_BOX = new Entity(scoreTxt);
             SCORE_BOX.entity.style.zIndex = 3;
             SCORE_BOX.moveTo(w-SCORE_BOX.width, 0);
             PLAYER.moveTo((w/2)-playerInfo.width, (h/2)-playerInfo.height);
             //Tick counter
             let tick=0;
+            //Key detecting
             window.addEventListener("keyup", function(event) {
                 Key.keyup(event);
             });
             window.addEventListener("keydown", function(event) {
                 Key.keydown(event);
             });
+            //Laser spawning
             window.addEventListener("click", function(event) {
                 if(!gamePause){
+                    //distance formula
                     let mX = (event.clientX-(PLAYER.x+PLAYER.width/2))/Math.sqrt((event.clientX-(PLAYER.x+PLAYER.width/2))*(event.clientX-(PLAYER.x+PLAYER.width/2))+(event.clientY-(PLAYER.y+PLAYER.height/2))*(event.clientY-(PLAYER.y+PLAYER.height/2)));
                     let mY = (event.clientY-(PLAYER.y+PLAYER.height/2))/Math.sqrt((event.clientX-(PLAYER.x+PLAYER.width/2))*(event.clientX-(PLAYER.x+PLAYER.width/2))+(event.clientY-(PLAYER.y+PLAYER.height/2))*(event.clientY-(PLAYER.y+PLAYER.height/2)));
                     laser.x = PLAYER.x+PLAYER.width/2-laser.width/2;
@@ -186,6 +196,7 @@
                     lasers.push(new Entity(laser), mX*20, mY*20);
                 }
             });
+            //Pause function
             window.addEventListener("keydown", function(event) {
                 if(event.key=="Escape"){
                     if(gamePause){
@@ -196,11 +207,13 @@
                     }
                 }
             });
+            //Creating lists for storing enemies and lasers
             let enemies = [];
             let enemyCount = 0;
             let lasers = [];
             //Updating the screen
             setInterval(()=>{
+                //Low quality option
                 if(Key.isDown(Key.p)){
                     if(lowQuality){
                         lowQuality = false;
@@ -213,13 +226,16 @@
                         enemy.color = "transparent";
                     }
                 }
+                //Main section of logic
                 if(!gamePause){
+                    //Score counter
                     SCORE_BOX.entity.innerHTML = `Score: ${score*100}`;
                     //Incrementing tick counter
                     tick++;
                     //Updating the bounds of the screen
                     w = window.innerWidth;
                     h = window.innerHeight;
+                    //Movement
                     if(Key.isDown(Key.up)){
                         PLAYER.move(0, -5);
                     }
@@ -232,73 +248,82 @@
                     if(Key.isDown(Key.right)){
                         PLAYER.move(5, 0);
                     }
+                    //Game over
                     for(let i=0;i<enemies.length;i++){
                         let tempE = enemies[i];
                         if(Entity.isTouching(PLAYER, tempE)){
                             window.close();
                         }
                     }
+                    //Laser collision and logic
                     for(let i=0;i<lasers.length;i++){
                         if(lasers[i]=="[object Object]"){
+                            //Delete if it reaches the edge of the screen
                             if((lasers[i].x>=w-lasers[i].width-40||lasers[i].x<=40)||(lasers[i].y>=h-lasers[i].height-40||lasers[i].y<=40)){
                                 lasers[i].delete(0, "all");
                                 lasers.splice(i, 1);
                             }
-                            if(!lasersPause){
-                                if(lasers[i]=="[object Object]"){
-                                    for(let j=0;j<enemies.length;j++){
-                                        let tempL = lasers[i];
-                                        let tempE = enemies[j];
-                                        if(Entity.isTouching(tempL, tempE)){
-                                            if(lasers[i]=="[object Object]"){
-                                                lasers[i].delete(0, "all");
-                                                lasers.splice(i, 1);
-                                                enemies[j].delete(0, "all");
-                                                enemies.splice(j, 1);
-                                                enemyCount--;
-                                                score++;
-                                            }
+                            //Detect if lasers hit enemies
+                            if(lasers[i]=="[object Object]"){
+                                for(let j=0;j<enemies.length;j++){
+                                    let tempL = lasers[i];
+                                    let tempE = enemies[j];
+                                    if(Entity.isTouching(tempL, tempE)){
+                                        if(lasers[i]=="[object Object]"){
+                                            lasers[i].delete(0, "all");
+                                            lasers.splice(i, 1);
+                                            enemies[j].delete(0, "all");
+                                            enemies.splice(j, 1);
+                                            enemyCount--;
+                                            score++;
                                         }
+                                    }
 
-                                    }
-                                    if(lasers[i]=="[object Object]"){
-                                        lasers[i].move(lasers[i+1], lasers[i+2]);
-                                    }
+                                }
+                                //Laser movement
+                                if(lasers[i]=="[object Object]"){
+                                    lasers[i].move(lasers[i+1], lasers[i+2]);
                                 }
                             }
                         }
                     }
-                    if(!enemiesPause){
-                    //Spawning an enemy every second
-                        if(tick%Math.round(200/(1+(tick/1000)))==0){
-                            enemies.push(new Entity(enemy));
-                            let cooords = [];
-                            ranEnemySpawns(playerInfo, cooords);
-                            enemies[enemyCount].moveTo(cooords[0], cooords[1]);
-                            if(!lowQuality){
-                                enemies[enemyCount].entity.style.backgroundColor = "#"+genRanHex(6);
-                            } else {
-                                enemies[enemyCount].entity.innerHTML = "enemy";
-                            }
-                            enemyCount++;
-                            
+                    if(1+tick/1000>200){
+                        tick = 199000;
+                    }
+                    //Spawning an enemy at increasing intervals
+                    if(tick%Math.round(200/(1+(tick/1000)))==0){
+                        enemies.push(new Entity(enemy));
+                        let cooords = [];
+                        //Random enemy location in a valid spawn area
+                        ranEnemySpawns(playerInfo, cooords);
+                        enemies[enemyCount].moveTo(cooords[0], cooords[1]);
+                        //Changing color if low quality is enabled
+                        if(!lowQuality){
+                            enemies[enemyCount].entity.style.backgroundColor = "#"+genRanHex(6);
+                        } else {
+                            enemies[enemyCount].entity.innerHTML = "enemy";
                         }
-                        if(enemies.length>0){
-                            for(let i in enemies){
-                                if(enemies[i].x<PLAYER.x){
-                                    enemies[i].move(1, 0);
-                                } else if(enemies[i].x>PLAYER.x){
-                                    enemies[i].move(-1, 0);
-                                }
-                                if(enemies[i].y<PLAYER.y){
-                                    enemies[i].move(0, 1);
-                                } else if(enemies[i].y>PLAYER.y){
-                                    enemies[i].move(0, -1);
-                                }
+                        //Keeping track of enemies
+                        enemyCount++;
+                        
+                    }
+                    //Move enemies towards player
+                    if(enemies.length>0){
+                        for(let i in enemies){
+                            if(enemies[i].x<PLAYER.x){
+                                enemies[i].move(1, 0);
+                            } else if(enemies[i].x>PLAYER.x){
+                                enemies[i].move(-1, 0);
+                            }
+                            if(enemies[i].y<PLAYER.y){
+                                enemies[i].move(0, 1);
+                            } else if(enemies[i].y>PLAYER.y){
+                                enemies[i].move(0, -1);
                             }
                         }
                     }
                 }
+            //Loops every 20 milliseconds
             },20);
         </script>
     </body>
