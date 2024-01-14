@@ -13,7 +13,8 @@
             let scoreMult = 100;
             //Function to generate a random hexadecimal of size length that isn't completely white
             function genRanHex (size) {
-                return [...Array(size)].map(() => Math.round(Math.random() * 15).toString(16)).join('');
+                let hexArray = Array(size);
+                return [...hexArray].map(() => Math.round(Math.random() * 15).toString(16)).join('');
             }
             //function to generate a random x and y that are in the spawning zones
             const ranEnemySpawns = (info, coords) => {
