@@ -35,21 +35,21 @@
             };
             //Keybinds
             let Key = {
-            pressed: {},
-            left: "a",
-            up: "w",
-            right: "d",
-            down: "s",
-            p: "p",
-            isDown: function (key){
-                return this.pressed[key];
-            },
-            keydown: function (event){
-                this.pressed[event.key] = true;
-            },
-            keyup: function (event){
-                delete this.pressed[event.key];
-            }
+                pressed: {},
+                left: "a",
+                up: "w",
+                right: "d",
+                down: "s",
+                p: "p",
+                isDown: function (key){
+                    return this.pressed[key];
+                },
+                keydown: function (event){
+                    this.pressed[event.key] = true;
+                },
+                keyup: function (event){
+                    delete this.pressed[event.key];
+                }
             };
             //A Class to create an element and associated statistics, then store it in the instance
             class Entity {
