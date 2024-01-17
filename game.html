@@ -114,7 +114,7 @@
                     },delay);
                 }
                 //A basic rectangle collision detector
-                static isTouching(element1, element2){
+                static async isTouching(element1, element2){
                     function touching(x1,y1,w1,h1,x2,y2,w2,h2){
                         if(x2>w1+x1||x1>w2+x2||y2>h1+y1||y1>h2+y2){
                             return false;
@@ -284,24 +284,26 @@
                     //Game over
                     for(let i=0;i<enemies.length;i++){
                         let tempE = enemies[i];
-                        if(Entity.isTouching(PLAYER, tempE)){
-                            NO_ENEMY.entity.style.display = "inline";
-                            NO_ENEMY.entity.innerHTML = "<h1 style='text-align: center;'>Game Over<br>Score: "+score+"</h1>";
-                            escapePause = true;
-                            gamePause = true;
-                            PLAYER.entity.style.backgroundColor = "transparent";
-                            PLAYER.entity.innerHTML = "";
-                            for(let j=0;j<lasers.length;j++){
-                                if(lasers[j]=="[object Object]"){
-                                    lasers[j].delete(0, "all");
+                        Entity.isTouching(PLAYER, tempE).then((value) => {
+                            if(value){
+                                NO_ENEMY.entity.style.display = "inline";
+                                NO_ENEMY.entity.innerHTML = "<h1 style='text-align: center;'>Game Over<br>Score: "+score+"</h1>";
+                                escapePause = true;
+                                gamePause = true;
+                                PLAYER.entity.style.backgroundColor = "transparent";
+                                PLAYER.entity.innerHTML = "";
+                                for(let j=0;j<lasers.length;j++){
+                                    if(lasers[j]=="[object Object]"){
+                                        lasers[j].delete(0, "all");
+                                    }
                                 }
+                                lasers.splice(0, lasers.length);
+                                for(let j=0;j<enemies.length;j++){
+                                    enemies[j].delete(0, "all");
+                                }
+                                enemies.splice(0, enemies.length);
                             }
-                            lasers.splice(0, lasers.length);
-                            for(let j=0;j<enemies.length;j++){
-                                enemies[j].delete(0, "all");
-                            }
-                            enemies.splice(0, enemies.length);
-                        }
+                        });
                     }
                     //Laser collision and logic
                     for(let i=0;i<lasers.length;i++){
@@ -316,16 +318,19 @@
                                 for(let j=0;j<enemies.length;j++){
                                     let tempL = lasers[i];
                                     let tempE = enemies[j];
-                                    if(Entity.isTouching(tempL, tempE)){
-                                        if(lasers[i]=="[object Object]"){
-                                            lasers[i].delete(0, "all");
-                                            lasers.splice(i, 1);
-                                            enemies[j].delete(0, "all");
-                                            enemies.splice(j, 1);
-                                            score += scoreMult;
+                                    Entity.isTouching(tempL, tempE).then((value) => {
+                                        if(value){
+                                            if(lasers[i]=="[object Object]"){
+                                                lasers[i].delete(0, "all");
+                                                lasers.splice(i, 1);
+                                                enemies[j].delete(0, "all");
+                                                enemies.splice(j, 1);
+                                                score += scoreMult;
+                                            }
                                         }
-                                    }
-
+                                    });
+                                    
+            
                                 }
                                 //Laser movement
                                 if(lasers[i]=="[object Object]"){
