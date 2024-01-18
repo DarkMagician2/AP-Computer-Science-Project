@@ -266,16 +266,16 @@ setInterval(()=>{
         h = window.innerHeight;
         //Movement
         if(Key.isDown(Key.up)){
-            PLAYER.move(0, -5);
+            PLAYER.move(0, -6);
         }
         if(Key.isDown(Key.left)){
-            PLAYER.move(-5, 0);
+            PLAYER.move(-6, 0);
         }
         if(Key.isDown(Key.down)){
-            PLAYER.move(0, 5);
+            PLAYER.move(0, 6);
         }
         if(Key.isDown(Key.right)){
-            PLAYER.move(5, 0);
+            PLAYER.move(6, 0);
         }
         //Game over
         for(let i=0;i<enemies.length;i++){
@@ -362,16 +362,9 @@ setInterval(()=>{
         //Move enemies towards player
         if(enemies.length>0){
             for(let i in enemies){
-                if(enemies[i].x<PLAYER.x){
-                    enemies[i].move(2*(1+difficulty/20), 0);
-                } else if(enemies[i].x>PLAYER.x){
-                    enemies[i].move(-2*(1+difficulty/20), 0);
-                }
-                if(enemies[i].y<PLAYER.y){
-                    enemies[i].move(0, 2*(1+difficulty/20));
-                } else if(enemies[i].y>PLAYER.y){
-                    enemies[i].move(0, -2*(1+difficulty/20));
-                }
+                let mX = (PLAYER.x-enemies[i].x)/Math.sqrt((PLAYER.x-enemies[i].x)*(PLAYER.x-enemies[i].x)+(PLAYER.y-enemies[i].y)*(PLAYER.y-enemies[i].y));
+                let mY = (PLAYER.y-enemies[i].y)/Math.sqrt((PLAYER.x-enemies[i].x)*(PLAYER.x-enemies[i].x)+(PLAYER.y-enemies[i].y)*(PLAYER.y-enemies[i].y));
+                enemies[i].move(mX*(2*(1+difficulty/20)), mY*(2*(1+difficulty/20)));
             }
         }
     }
