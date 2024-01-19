@@ -229,9 +229,35 @@ window.addEventListener("keydown", function(event) {
             } else if(scale==250){
                 scale = 100;
                 scoreMult = 500;
+            } else if(scale==100){
+                if(lowQuality){
+                    scale = 10;
+                    scoreMult = 2000;
+                } else {
+                    scale = 1000;
+                    scoreMult = 25;
+                }
             } else {
                 scale = 1000;
                 scoreMult = 25;
+            }
+        }
+        //Low quality option
+        if(event.key=="p"){
+            if(lowQuality){
+                lowQuality = false;
+                PLAYER.entity.style.backgroundColor = "#123456";
+                PLAYER.entity.innerHTML = "";
+                laser.color = "red";
+                laser.name = "";
+                enemy.color = "";
+            } else {
+                lowQuality = true;
+                PLAYER.entity.style.backgroundColor = "transparent";
+                PLAYER.entity.innerHTML = "player";
+                laser.color = "transparent";
+                laser.name = "laser";
+                enemy.color = "transparent";
             }
         }
     }
@@ -242,19 +268,6 @@ let enemyCount = 0;
 let lasers = [];
 //Updating the screen
 setInterval(()=>{
-    //Low quality option
-    if(Key.isDown(Key.p)){
-        if(lowQuality){
-            lowQuality = false;
-        } else {
-            lowQuality = true;
-            PLAYER.entity.style.backgroundColor = "transparent";
-            PLAYER.entity.innerHTML = "player";
-            laser.color = "transparent";
-            laser.name = "laser";
-            enemy.color = "transparent";
-        }
-    }
     //Main section of logic
     if(!gamePause){
         //Score counter
