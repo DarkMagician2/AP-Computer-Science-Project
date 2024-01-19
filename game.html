@@ -12,7 +12,7 @@
             let scale = 500;
             let scoreMult = 100;
             //Function to generate a random hexadecimal of size length that isn't completely white
-            const genRanHex = (size) => {
+            const genRanHex  = (size) => {
                 let hexArray = Array(size);
                 return [...hexArray].map(() => Math.round(Math.random() * 15).toString(16)).join('');
             }
@@ -233,9 +233,35 @@
                         } else if(scale==250){
                             scale = 100;
                             scoreMult = 500;
+                        } else if(scale==100){
+                            if(lowQuality){
+                                scale = 10;
+                                scoreMult = 2000;
+                            } else {
+                                scale = 1000;
+                                scoreMult = 25;
+                            }
                         } else {
                             scale = 1000;
                             scoreMult = 25;
+                        }
+                    }
+                    //Low quality option
+                    if(event.key=="p"){
+                        if(lowQuality){
+                            lowQuality = false;
+                            PLAYER.entity.style.backgroundColor = "#123456";
+                            PLAYER.entity.innerHTML = "";
+                            laser.color = "red";
+                            laser.name = "";
+                            enemy.color = "";
+                        } else {
+                            lowQuality = true;
+                            PLAYER.entity.style.backgroundColor = "transparent";
+                            PLAYER.entity.innerHTML = "player";
+                            laser.color = "transparent";
+                            laser.name = "laser";
+                            enemy.color = "transparent";
                         }
                     }
                 }
@@ -246,19 +272,6 @@
             let lasers = [];
             //Updating the screen
             setInterval(()=>{
-                //Low quality option
-                if(Key.isDown(Key.p)){
-                    if(lowQuality){
-                        lowQuality = false;
-                    } else {
-                        lowQuality = true;
-                        PLAYER.entity.style.backgroundColor = "transparent";
-                        PLAYER.entity.innerHTML = "player";
-                        laser.color = "transparent";
-                        laser.name = "laser";
-                        enemy.color = "transparent";
-                    }
-                }
                 //Main section of logic
                 if(!gamePause){
                     //Score counter
