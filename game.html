@@ -12,7 +12,7 @@
             let scale = 500;
             let scoreMult = 100;
             //Function to generate a random hexadecimal of size length that isn't completely white
-            function genRanHex (size) {
+            const genRanHex = (size) => {
                 let hexArray = Array(size);
                 return [...hexArray].map(() => Math.round(Math.random() * 15).toString(16)).join('');
             }
@@ -368,7 +368,7 @@
                         for(let i in enemies){
                             let mX = (PLAYER.x-enemies[i].x)/Math.sqrt((PLAYER.x-enemies[i].x)*(PLAYER.x-enemies[i].x)+(PLAYER.y-enemies[i].y)*(PLAYER.y-enemies[i].y));
                             let mY = (PLAYER.y-enemies[i].y)/Math.sqrt((PLAYER.x-enemies[i].x)*(PLAYER.x-enemies[i].x)+(PLAYER.y-enemies[i].y)*(PLAYER.y-enemies[i].y));
-                            enemies[i].move(mX*(2.25*(1+difficulty/20)), mY*(2.25*(1+difficulty/20)));
+                            enemies[i].move(mX*(2*(1+difficulty/20)), mY*(2*(1+difficulty/20)));
                         }
                     }
                 }
