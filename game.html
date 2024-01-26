@@ -179,7 +179,7 @@
             //Providing information
             const startGame = setInterval(()=>{
                 NO_ENEMY.entity.innerHTML = "<h1 style='text-align: center;'>Welcome to My Shooter Game</h1><br><br><h2>Controls:</h2><br><h3>W is up, a is left, s is down, d is right, left click to shoot towards the mouse cursor, and escape is to pause. Your goal is to gain the highest score possible, to do that, shoot enemies. If an enemy touches you, the game will end. To enable low definition, press p now. To switch between easy mode, normal mode, hard mode, harder mode, or impossible mode, press h. Note: You earn less points in easy mode, and more in the harder difficulties. To exit this menu, press escape.</h3><br><h3>Current difficulty scaling: "+((scale==1000) ? "easy mode" : (scale==500) ? "normal mode" : (scale==400) ? "hard mode" : (scale==250) ? "harder mode" : "impossible mode")+"</h3>";
-            }, 20);
+            }, 10);
             //Creating the scoreboard
             const SCORE_BOX = new Entity(scoreTxt);
             SCORE_BOX.entity.style.zIndex = 3;
@@ -202,7 +202,7 @@
                     let mY = (event.clientY-(PLAYER.y+PLAYER.height/2))/Math.sqrt((event.clientX-(PLAYER.x+PLAYER.width/2))*(event.clientX-(PLAYER.x+PLAYER.width/2))+(event.clientY-(PLAYER.y+PLAYER.height/2))*(event.clientY-(PLAYER.y+PLAYER.height/2)));
                     laser.x = PLAYER.x+PLAYER.width/2-laser.width/2;
                     laser.y = PLAYER.y+PLAYER.height/2-laser.width/2;
-                    lasers.push(new Entity(laser), mX*20, mY*20);
+                    lasers.push(new Entity(laser), mX*10, mY*10);
                 }
             });
             //Pause function
@@ -284,16 +284,16 @@
                     h = window.innerHeight;
                     //Movement
                     if(Key.isDown(Key.up)){
-                        PLAYER.move(0, -6);
+                        PLAYER.move(0, -3);
                     }
                     if(Key.isDown(Key.left)){
-                        PLAYER.move(-6, 0);
+                        PLAYER.move(-3, 0);
                     }
                     if(Key.isDown(Key.down)){
-                        PLAYER.move(0, 6);
+                        PLAYER.move(0, 3);
                     }
                     if(Key.isDown(Key.right)){
-                        PLAYER.move(6, 0);
+                        PLAYER.move(3, 0);
                     }
                     //Game over
                     enemies.forEach((elem)=>{
@@ -306,7 +306,7 @@
                                 gamePause = true;
                                 PLAYER.entity.style.backgroundColor = "transparent";
                                 PLAYER.entity.innerHTML = "";
-                                lasers.forEach((elem)=>{
+                                lasers.forEach((elem1)=>{
                                     if(elem1=="[object Object]"){
                                         elem1.delete(0, "all");
                                     }
@@ -356,7 +356,7 @@
                         difficulty = 200;
                     }
                     //Spawning an enemy at increasing intervals
-                    if(tick%Math.round(200/difficulty)==0){
+                    if(tick%Math.round(400/difficulty)==0){
                         enemies.push(new Entity(enemy));
                         let cooords = [];
                         enemyCount = enemies.length-1;
@@ -380,12 +380,12 @@
                         for(let i in enemies){
                             let mX = (PLAYER.x-enemies[i].x)/Math.sqrt((PLAYER.x-enemies[i].x)*(PLAYER.x-enemies[i].x)+(PLAYER.y-enemies[i].y)*(PLAYER.y-enemies[i].y));
                             let mY = (PLAYER.y-enemies[i].y)/Math.sqrt((PLAYER.x-enemies[i].x)*(PLAYER.x-enemies[i].x)+(PLAYER.y-enemies[i].y)*(PLAYER.y-enemies[i].y));
-                            enemies[i].move(mX*(2*(1+difficulty/20)), mY*(2*(1+difficulty/20)));
+                            enemies[i].move(mX*(1+difficulty/20), mY*(1+difficulty/20));
                         }
                     }
                 }
-            //Loops every 20 milliseconds
-            },20);
+            //Loops every 10 milliseconds
+            },10);
         </script>
     </body>
 </html>
