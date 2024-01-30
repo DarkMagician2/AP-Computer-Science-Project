@@ -14,7 +14,9 @@
             //Function to generate a random hexadecimal of size length that isn't completely white
             const genRanHex  = (size) => {
                 let hexArray = Array(size);
-                return [...hexArray].map(() => Math.round(Math.random() * 15).toString(16)).join('');
+                return [...hexArray].map(() => {
+                    return Math.round(Math.random() * 15).toString(16);
+                }).join('');
             }
             //function to generate a random x and y that are in the spawning zones
             const ranEnemySpawns = (info, coords) => {
@@ -44,10 +46,10 @@
                 isDown: function (key){
                     return this.pressed[key];
                 },
-                keydown: function (event){
+                keyDown: function (event){
                     this.pressed[event.key] = true;
                 },
-                keyup: function (event){
+                keyUp: function (event){
                     delete this.pressed[event.key];
                 }
             };
@@ -177,7 +179,7 @@
             //Providing information
             const startGame = setInterval(()=>{
                 NO_ENEMY.entity.innerHTML = "<h1 style='text-align: center;'>Welcome to My Shooter Game</h1><br><br><h2>Controls:</h2><br><h3>W is up, a is left, s is down, d is right, left click to shoot towards the mouse cursor, and escape is to pause. Your goal is to gain the highest score possible, to do that, shoot enemies. If an enemy touches you, the game will end. To enable low definition, press p now. To switch between easy mode, normal mode, hard mode, harder mode, or impossible mode, press h. Note: You earn less points in easy mode, and more in the harder difficulties. To exit this menu, press escape.</h3><br><h3>Current difficulty scaling: "+((scale==1000) ? "easy mode" : (scale==500) ? "normal mode" : (scale==400) ? "hard mode" : (scale==250) ? "harder mode" : "impossible mode")+"</h3>";
-            }, 20);
+            }, 10);
             //Creating the scoreboard
             const SCORE_BOX = new Entity(scoreTxt);
             SCORE_BOX.entity.style.zIndex = 3;
@@ -187,10 +189,10 @@
             let tick=0;
             //Key detecting
             window.addEventListener("keyup", function(event) {
-                Key.keyup(event);
+                Key.keyUp(event);
             });
             window.addEventListener("keydown", function(event) {
-                Key.keydown(event);
+                Key.keyDown(event);
             });
             //Laser spawning
             window.addEventListener("click", function(event) {
@@ -200,7 +202,7 @@
                     let mY = (event.clientY-(PLAYER.y+PLAYER.height/2))/Math.sqrt((event.clientX-(PLAYER.x+PLAYER.width/2))*(event.clientX-(PLAYER.x+PLAYER.width/2))+(event.clientY-(PLAYER.y+PLAYER.height/2))*(event.clientY-(PLAYER.y+PLAYER.height/2)));
                     laser.x = PLAYER.x+PLAYER.width/2-laser.width/2;
                     laser.y = PLAYER.y+PLAYER.height/2-laser.width/2;
-                    lasers.push(new Entity(laser), mX*20, mY*20);
+                    lasers.push(new Entity(laser), mX*10, mY*10);
                 }
             });
             //Pause function
@@ -216,9 +218,7 @@
                         }
                     }
                 }
-            });
-            //Difficulty scaling
-            window.addEventListener("keydown", function(event) {
+                //Difficulty scaling
                 if(gamePause){
                     if(event.key=="h"){
                         if(scale==1000){
@@ -266,6 +266,7 @@
                     }
                 }
             });
+            
             //Creating lists for storing enemies and lasers
             let enemies = [];
             let enemyCount = 0;
@@ -283,81 +284,79 @@
                     h = window.innerHeight;
                     //Movement
                     if(Key.isDown(Key.up)){
-                        PLAYER.move(0, -6);
+                        PLAYER.move(0, -3);
                     }
                     if(Key.isDown(Key.left)){
-                        PLAYER.move(-6, 0);
+                        PLAYER.move(-3, 0);
                     }
                     if(Key.isDown(Key.down)){
-                        PLAYER.move(0, 6);
+                        PLAYER.move(0, 3);
                     }
                     if(Key.isDown(Key.right)){
-                        PLAYER.move(6, 0);
+                        PLAYER.move(3, 0);
                     }
                     //Game over
-                    for(let i=0;i<enemies.length;i++){
-                        let tempE = enemies[i];
+                    enemies.forEach((elem)=>{
+                        let tempE = elem;
                         Entity.isTouching(PLAYER, tempE).then((value) => {
                             if(value){
                                 NO_ENEMY.entity.style.display = "inline";
                                 NO_ENEMY.entity.innerHTML = "<h1 style='text-align: center;'>Game Over<br>Score: "+score+"</h1>";
-                                escapePause = true;
-                                gamePause = true;
                                 PLAYER.entity.style.backgroundColor = "transparent";
                                 PLAYER.entity.innerHTML = "";
-                                for(let j=0;j<lasers.length;j++){
-                                    if(lasers[j]=="[object Object]"){
-                                        lasers[j].delete(0, "all");
+                                lasers.forEach((elem1)=>{
+                                    if(elem1=="[object Object]"){
+                                        elem1.delete(0, "all");
                                     }
-                                }
+                                });
                                 lasers.splice(0, lasers.length);
-                                for(let j=0;j<enemies.length;j++){
-                                    enemies[j].delete(0, "all");
-                                }
+                                lasers.forEach((elem)=>{
+                                    elem.delete(0, "all");
+                                });
                                 enemies.splice(0, enemies.length);
+                                escapePause = true;
+                                gamePause = true;
                             }
                         });
-                    }
+                    });
                     //Laser collision and logic
-                    for(let i=0;i<lasers.length;i++){
-                        if(lasers[i]=="[object Object]"){
+                    lasers.forEach((elem)=>{
+                        if(elem=="[object Object]"){
                             //Delete if it reaches the edge of the screen
-                            if((lasers[i].x>=w-lasers[i].width-40||lasers[i].x<=40)||(lasers[i].y>=h-lasers[i].height-40||lasers[i].y<=40)){
-                                lasers[i].delete(0, "all");
-                                lasers.splice(i, 1);
+                            if((elem.x>=w-elem.width-40||elem.x<=40)||(elem.y>=h-elem.height-40||elem.y<=40)){
+                                elem.delete(0, "all");
+                                lasers.splice(lasers.indexOf(elem), 1);
                             }
                             //Detect if lasers hit enemies
-                            if(lasers[i]=="[object Object]"){
-                                for(let j=0;j<enemies.length;j++){
-                                    let tempL = lasers[i];
-                                    let tempE = enemies[j];
+                            if(elem=="[object Object]"){
+                                enemies.forEach((elem1)=>{
+                                    let tempL = elem;
+                                    let tempE = elem1;
                                     Entity.isTouching(tempL, tempE).then((value) => {
                                         if(value){
-                                            if(lasers[i]=="[object Object]"){
-                                                lasers[i].delete(0, "all");
-                                                lasers.splice(i, 1);
-                                                enemies[j].delete(0, "all");
-                                                enemies.splice(j, 1);
+                                            if(elem=="[object Object]"){
+                                                elem.delete(0, "all");
+                                                lasers.splice(lasers.indexOf(elem), 1);
+                                                tempE.delete(0, "all");
+                                                enemies.splice(enemies.indexOf(tempE), 1);
                                                 score += scoreMult;
                                             }
                                         }
                                     });
-                                    
-            
-                                }
+                                });
                                 //Laser movement
-                                if(lasers[i]=="[object Object]"){
-                                    lasers[i].move(lasers[i+1], lasers[i+2]);
+                                if(elem=="[object Object]"){
+                                    elem.move(lasers[lasers.indexOf(elem)+1], lasers[lasers.indexOf(elem)+2]);
                                 }
                             }
                         }
-                    }
+                    });
                     let difficulty = Math.round(1+tick/scale);
                     if(difficulty>200){
                         difficulty = 200;
                     }
                     //Spawning an enemy at increasing intervals
-                    if(tick%Math.round(200/difficulty)==0){
+                    if(tick%Math.round(400/difficulty)==0){
                         enemies.push(new Entity(enemy));
                         let cooords = [];
                         enemyCount = enemies.length-1;
@@ -381,12 +380,12 @@
                         for(let i in enemies){
                             let mX = (PLAYER.x-enemies[i].x)/Math.sqrt((PLAYER.x-enemies[i].x)*(PLAYER.x-enemies[i].x)+(PLAYER.y-enemies[i].y)*(PLAYER.y-enemies[i].y));
                             let mY = (PLAYER.y-enemies[i].y)/Math.sqrt((PLAYER.x-enemies[i].x)*(PLAYER.x-enemies[i].x)+(PLAYER.y-enemies[i].y)*(PLAYER.y-enemies[i].y));
-                            enemies[i].move(mX*(2*(1+difficulty/20)), mY*(2*(1+difficulty/20)));
+                            enemies[i].move(mX*(1+difficulty/20), mY*(1+difficulty/20));
                         }
                     }
                 }
-            //Loops every 20 milliseconds
-            },20);
+            //Loops every 10 milliseconds
+            },10);
         </script>
     </body>
 </html>
