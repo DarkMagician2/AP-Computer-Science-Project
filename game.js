@@ -306,7 +306,7 @@ setInterval(()=>{
                         }
                     });
                     lasers.splice(0, lasers.length);
-                    lasers.forEach((elem)=>{
+                    enemies.forEach((elem)=>{
                         elem.delete(0, "all");
                     });
                     enemies.splice(0, enemies.length);
