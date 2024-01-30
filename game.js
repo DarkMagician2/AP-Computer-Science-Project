@@ -298,8 +298,6 @@ setInterval(()=>{
                 if(value){
                     NO_ENEMY.entity.style.display = "inline";
                     NO_ENEMY.entity.innerHTML = "<h1 style='text-align: center;'>Game Over<br>Score: "+score+"</h1>";
-                    escapePause = true;
-                    gamePause = true;
                     PLAYER.entity.style.backgroundColor = "transparent";
                     PLAYER.entity.innerHTML = "";
                     lasers.forEach((elem1)=>{
@@ -312,6 +310,8 @@ setInterval(()=>{
                         elem.delete(0, "all");
                     });
                     enemies.splice(0, enemies.length);
+                    escapePause = true;
+                    gamePause = true;
                 }
             });
         });
