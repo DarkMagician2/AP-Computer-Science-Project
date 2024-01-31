@@ -43,10 +43,10 @@ let Key = {
         return this.pressed[key];
     },
     keyDown: function (event){
-        this.pressed[event.key] = true;
+        this.pressed[event.key.toLowerCase()] = true;
     },
     keyUp: function (event){
-        delete this.pressed[event.key];
+        delete this.pressed[event.key.toLowerCase()];
     }
 };
 //A Class to create an element and associated statistics, then store it in the instance
