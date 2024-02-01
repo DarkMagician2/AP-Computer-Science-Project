@@ -8,11 +8,14 @@ let lowQuality = false;
 let scale = 500;
 let scoreMult = 100;
 //Function to generate a random hexadecimal of size length that isn't completely white
-const genRanHex  = (size) => {
-    let hexArray = Array(size);
-    return [...hexArray].map(() => {
+const RandomHexidecimal  = (length) => {
+    let hexVals = Array(length);
+    let hexString = [...hexVals]
+    hexString.map(() => {
         return Math.round(Math.random() * 15).toString(16);
-    }).join('');
+    });
+    let hexCode = hexString.join('')
+    return hexCode;
 }
 //function to generate a random x and y that are in the spawning zones
 const ranEnemySpawns = (info, coords) => {
@@ -363,7 +366,7 @@ setInterval(()=>{
                 enemies[enemyCount].moveTo(cooords[0], cooords[1]);
                 //Changing color if low quality is enabled
                 if(!lowQuality){
-                    enemies[enemyCount].entity.style.backgroundColor = "#"+genRanHex(6);
+                    enemies[enemyCount].entity.style.backgroundColor = "#"+RandomHexidecimal(6);
                 } else {
                     enemies[enemyCount].entity.innerHTML = "enemy";
                 }
