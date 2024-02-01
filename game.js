@@ -347,6 +347,7 @@ setInterval(()=>{
                 }
             }
         });
+        //Difficulty scaling
         let difficulty = Math.round(1+tick/scale);
         if(difficulty>200){
             difficulty = 200;
