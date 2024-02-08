@@ -10,7 +10,7 @@ let scoreMult = 100;
 //Function to generate a random hexadecimal of size length that isn't completely white
 const RandomHexidecimal  = (length) => {
     let hexVals = Array(length);
-    let hexString = [...hexVals]
+    let hexString = [...hexVals];
     hexString.map(() => {
         return Math.round(Math.random() * 15).toString(16);
     });
