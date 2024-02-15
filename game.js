@@ -308,8 +308,8 @@ setInterval(()=>{
                         }
                     });
                     lasers.splice(0, lasers.length);
-                    enemies.forEach((elem)=>{
-                        elem.delete(0, "all");
+                    enemies.forEach((elem1)=>{
+                        elem1.delete(0, "all");
                     });
                     enemies.splice(0, enemies.length);
                     escapePause = true;
