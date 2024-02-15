@@ -10,11 +10,10 @@ let scoreMult = 100;
 //Function to generate a random hexadecimal of size length that isn't completely white
 const RandomHexidecimal  = (length) => {
     let hexVals = Array(length);
-    let hexString = [...hexVals];
-    hexString.map(() => {
+    let results = [...hexVals].map(() => {
         return Math.round(Math.random() * 15).toString(16);
     });
-    let hexCode = hexString.join('')
+    let hexCode = results.join('')
     return hexCode;
 }
 //function to generate a random x and y that are in the spawning zones
