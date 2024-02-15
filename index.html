@@ -26,6 +26,31 @@
                 let outy = Math.round(Math.random()*(h-info.height));
                 return ((outx>(w/8)-info.width&&outx<7*(w/8))&&(outy>(h/8)-info.height&&outy<7*(h/8))) ? ranEnemySpawns(info, coords) : coords.push(outx, outy);
             }
+            const gameOver = (arr) => {
+                arr.forEach((elem)=>{
+                    let tempE = elem;
+                    Entity.isTouching(PLAYER, tempE).then((value) => {
+                        if(value){
+                            NO_ENEMY.entity.style.display = "inline";
+                            NO_ENEMY.entity.innerHTML = "<h1 style='text-align: center;'>Game Over<br>Score: "+score+"</h1>";
+                            PLAYER.entity.style.backgroundColor = "transparent";
+                            PLAYER.entity.innerHTML = "";
+                            lasers.forEach((elem1)=>{
+                                if(elem1=="[object Object]"){
+                                    elem1.delete(0, "all");
+                                }
+                            });
+                            lasers.splice(0, lasers.length);
+                            arr.forEach((elem1)=>{
+                                elem1.delete(0, "all");
+                            });
+                            arr.splice(0, arr.length);
+                            escapePause = true;
+                            gamePause = true;
+                        }
+                    });
+                });
+            }
             //Entity Base: the default if no parameters are entered when creating an instance of the Entity class
             const EB = {
                 posType: "px",
