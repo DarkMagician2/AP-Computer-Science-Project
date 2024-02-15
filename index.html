@@ -323,29 +323,7 @@
                         PLAYER.move(3, 0);
                     }
                     //Game over
-                    enemies.forEach((elem)=>{
-                        let tempE = elem;
-                        Entity.isTouching(PLAYER, tempE).then((value) => {
-                            if(value){
-                                NO_ENEMY.entity.style.display = "inline";
-                                NO_ENEMY.entity.innerHTML = "<h1 style='text-align: center;'>Game Over<br>Score: "+score+"</h1>";
-                                PLAYER.entity.style.backgroundColor = "transparent";
-                                PLAYER.entity.innerHTML = "";
-                                lasers.forEach((elem1)=>{
-                                    if(elem1=="[object Object]"){
-                                        elem1.delete(0, "all");
-                                    }
-                                });
-                                lasers.splice(0, lasers.length);
-                                enemies.forEach((elem1)=>{
-                                    elem1.delete(0, "all");
-                                });
-                                enemies.splice(0, enemies.length);
-                                escapePause = true;
-                                gamePause = true;
-                            }
-                        });
-                    });
+                    gameOver(enemies);
                     //Laser collision and logic
                     lasers.forEach((elem)=>{
                         if(elem=="[object Object]"){
