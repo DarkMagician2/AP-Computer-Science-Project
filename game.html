@@ -15,10 +15,9 @@
             const RandomHexidecimal  = (length) => {
                 let hexVals = Array(length);
                 let hexString = [...hexVals];
-                hexString.map(() => {
+                let hexCode = hexString.map(() => {
                     return Math.round(Math.random() * 15).toString(16);
-                });
-                let hexCode = hexString.join('')
+                });.join('')
                 return hexCode;
             }
             //function to generate a random x and y that are in the spawning zones
